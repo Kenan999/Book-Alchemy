@@ -3,30 +3,57 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ author.name }} Details</title>
+    <title>{{ author.name }} - Book Alchemy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-<body style="font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><a href="/">📚 Book Alchemy</a></h1>
+            <nav class="nav-links">
+                <a href="/" class="btn btn-outline">&larr; Back to Library</a>
+            </nav>
+        </header>
 
-    <p><a href="/">&larr; Back to Library</a></p>
+        <div class="form-card" style="max-width: 800px; margin-top: 1rem;">
+            <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem;">{{ author.name }}</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem;">
+                <strong>Born:</strong> {{ author.birth_date or 'Unknown' }}
+                {% if author.date_of_death %}
+                | <strong>Died:</strong> {{ author.date_of_death }}
+                {% endif %}
+            </p>
 
-    <h1>{{ author.name }}</h1>
-    <p><strong>Birth Date:</strong> {{ author.birth_date or 'Unknown' }}</p>
-    <p><strong>Date of Death:</strong> {{ author.date_of_death or 'N/A' }}</p>
+            <form action="/author/{{ author.id }}/delete" method="POST" style="margin-bottom: 2rem;">
+                <button type="submit" class="btn btn-danger">Delete Author</button>
+            </form>
 
-    <h2 style="margin-top: 40px;">Books by {{ author.name }}</h2>
+            <h2 style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border);">Books by {{
+                author.name }}</h2>
 
-    {% if author.books %}
-    <ul>
-        {% for book in author.books %}
-        <li><a href="/book/{{ book.id }}">{{ book.title }}</a> ({{ book.publication_year }})</li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>No books currently in the library for this author.</p>
-    {% endif %}
-
+            {% if author.books %}
+            <ul class="author-books-list">
+                {% for book in author.books %}
+                <li>
+                    <a href="/book/{{ book.id }}" style="color: var(--text-main); text-decoration: none;">
+                        {{ book.title }}
+                        <span style="margin-left: 0.5rem; font-weight: normal;">({{ book.publication_year }})</span>
+                    </a>
+                    {% if book.rating %}
+                    <span style="color: #F59E0B; font-weight: bold; margin-left: auto;">&#9733; {{ book.rating
+                        }}/10</span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p style="color: var(--text-muted); margin-top: 1rem;">No books currently in the library for this author.
+            </p>
+            {% endif %}
+        </div>
+    </div>
 </body>
 
 </html>

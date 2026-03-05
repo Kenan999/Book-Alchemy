@@ -3,79 +3,85 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>My Library</title>
+  <title>Book Alchemy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-  <h1>My Library</h1>
+  <div class="container">
+    <header class="header">
+      <h1><a href="/">📚 Book Alchemy</a></h1>
+      <nav class="nav-links">
+        <a href="/add_author" class="btn btn-outline">Add Author</a>
+        <a href="/add_book" class="btn">Add Book</a>
+      </nav>
+    </header>
 
-  <p>
-    <a href="/add_author">Add New Author</a> |
-    <a href="/add_book">Add New Book</a>
-  </p>
+    {% if success_message %}
+    <div class="success-msg">{{ success_message }}</div>
+    {% endif %}
 
-  {% if success_message %}
-  <p style="color: green; font-weight: bold; background-color: #e6ffe6; padding: 10px; border-radius: 5px;">{{
-    success_message }}</p>
-  {% endif %}
-
-  <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 20px;">
-    <form action="/" method="GET" style="margin: 0;">
-      <label for="search">Search Book:</label>
-      <input type="text" id="search" name="search" value="{{ search_query or '' }}" placeholder="Enter keyword...">
-      <button type="submit">Search</button>
-      {% if search_query %}
-      <a href="/" style="margin-left: 10px;">Clear Search</a>
-      {% endif %}
-    </form>
-
-    <form action="/" method="GET" style="margin: 0;">
-      <input type="hidden" name="search" value="{{ search_query or '' }}">
-      <label for="sort_by">Sort by:</label>
-      <select name="sort_by" id="sort_by" onchange="this.form.submit()">
-        <option value="title" {% if sort_by=='title' %}selected{% endif %}>Title</option>
-        <option value="author" {% if sort_by=='author' %}selected{% endif %}>Author</option>
-      </select>
-    </form>
-  </div>
-
-  <div style="display: flex; flex-wrap: wrap; gap: 20px;">
-    {% for book in books %}
-    <div
-      style="border: 1px solid #ccc; border-radius: 8px; padding: 10px; width: 220px; text-align: center; position: relative;">
-      {% if book.isbn %}
-      <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg" alt="Cover of {{ book.title }}"
-        style="max-height: 250px; width: auto;">
-      {% endif %}
-      <h3 style="margin: 10px 0 5px 0;"><a href="/book/{{ book.id }}" style="text-decoration: none; color: #333;">{{
-          book.title }}</a></h3>
-      <p style="margin: 0 0 10px 0; color: #555;">by <a href="/author/{{ book.author.id }}"
-          style="text-decoration: none; color: #0066cc;">{{ book.author.name if book.author else 'Unknown' }}</a></p>
-      {% if book.rating %}
-      <p style="margin: 0 0 10px 0; font-weight: bold; color: #f39c12;">&#9733; {{ book.rating }}/10</p>
-      {% endif %}
-
-      <div style="display: flex; justify-content: space-around; gap: 5px;">
-        <form action="/book/{{ book.id }}/delete" method="POST" style="margin: 0;">
-          <input type="submit" value="Delete Book"
-            style="background-color: #ff4d4d; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; font-size: 0.85em;">
-        </form>
-
-        {% if book.author %}
-        <form action="/author/{{ book.author.id }}/delete" method="POST" style="margin: 0;">
-          <input type="submit" value="Delete Author"
-            style="background-color: #c0392b; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; font-size: 0.85em;">
-        </form>
+    <div class="controls-bar">
+      <form action="/" method="GET" class="search-form">
+        <label for="search" style="display: none;">Search Book:</label>
+        <input type="text" id="search" name="search" value="{{ search_query or '' }}" placeholder="Search by title...">
+        <button type="submit" class="btn">Search</button>
+        {% if search_query %}
+        <a href="/" style="margin-left: 0.5rem; font-size: 0.9rem;">Clear</a>
         {% endif %}
-      </div>
-    </div>
-    {% else %}
-    <p>No books in the library yet. <a href="/add_book">Add one!</a></p>
-    {% endfor %}
-  </div>
+      </form>
 
+      <form action="/" method="GET" class="sort-form">
+        <input type="hidden" name="search" value="{{ search_query or '' }}">
+        <label for="sort_by">Sort by:</label>
+        <select name="sort_by" id="sort_by" onchange="this.form.submit()">
+          <option value="title" {% if sort_by=='title' %}selected{% endif %}>Title</option>
+          <option value="author" {% if sort_by=='author' %}selected{% endif %}>Author</option>
+        </select>
+      </form>
+    </div>
+
+    <div class="book-grid">
+      {% for book in books %}
+      <div class="book-card">
+        {% if book.isbn %}
+        <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg" alt="Cover of {{ book.title }}"
+          class="book-cover">
+        {% else %}
+        <div class="book-cover"
+          style="display: flex; align-items: center; justify-content: center; background-color:#e5e7eb; color: #9ca3af;">
+          No Cover</div>
+        {% endif %}
+
+        <div class="book-info">
+          <h3 class="book-title"><a href="/book/{{ book.id }}">{{ book.title }}</a></h3>
+          <div class="book-author">by <a href="/author/{{ book.author.id }}">{{ book.author.name if book.author else
+              'Unknown' }}</a></div>
+
+          {% if book.rating %}
+          <div class="book-rating">&#9733; {{ book.rating }}/10</div>
+          {% endif %}
+
+          <div class="book-actions">
+            <form action="/book/{{ book.id }}/delete" method="POST">
+              <button type="submit" class="btn btn-danger">Delete Book</button>
+            </form>
+            {% if book.author %}
+            <form action="/author/{{ book.author.id }}/delete" method="POST">
+              <button type="submit" class="btn btn-danger">Delete Author</button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 3rem;">
+        No books found in the library. <a href="/add_book" style="font-weight: 600;">Add one!</a>
+      </p>
+      {% endfor %}
+    </div>
+  </div>
 </body>
 
 </html>

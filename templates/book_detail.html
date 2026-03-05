@@ -3,34 +3,52 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ book.title }} Details</title>
+    <title>{{ book.title }} - Book Alchemy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-<body style="font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><a href="/">📚 Book Alchemy</a></h1>
+            <nav class="nav-links">
+                <a href="/" class="btn btn-outline">&larr; Back to Library</a>
+            </nav>
+        </header>
 
-    <p><a href="/">&larr; Back to Library</a></p>
+        <div class="detail-card">
+            <div style="flex-shrink: 0;">
+                {% if book.isbn %}
+                <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-L.jpg" alt="Cover of {{ book.title }}"
+                    class="detail-cover">
+                {% else %}
+                <div class="detail-cover"
+                    style="height: 380px; width: 250px; display: flex; align-items: center; justify-content: center; background-color: #e5e7eb; color: #9ca3af; font-weight: 600;">
+                    No Cover Available</div>
+                {% endif %}
+            </div>
 
-    <h1>{{ book.title }}</h1>
+            <div class="detail-info">
+                <h1>{{ book.title }}</h1>
+                <div class="meta">by <a href="/author/{{ book.author.id }}">{{ book.author.name if book.author else
+                        'Unknown' }}</a></div>
 
-    <div style="display: flex; gap: 20px; align-items: flex-start; margin-top: 20px;">
-        {% if book.isbn %}
-        <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-L.jpg" alt="Cover of {{ book.title }}"
-            style="max-height: 400px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-        {% endif %}
+                <p><strong>ISBN:</strong> {{ book.isbn or 'N/A' }}</p>
+                <p><strong>Publication Year:</strong> {{ book.publication_year or 'N/A' }}</p>
 
-        <div>
-            <h2>Author: <a href="/author/{{ book.author.id }}">{{ book.author.name if book.author else 'Unknown' }}</a>
-            </h2>
-            <p><strong>ISBN:</strong> {{ book.isbn or 'N/A' }}</p>
-            <p><strong>Publication Year:</strong> {{ book.publication_year or 'N/A' }}</p>
-            {% if book.rating %}
-            <p><strong>Rating:</strong> <span style="color: #f39c12; font-weight: bold;">&#9733; {{ book.rating
-                    }}/10</span></p>
-            {% endif %}
+                {% if book.rating %}
+                <div class="detail-rating">&#9733; {{ book.rating }} / 10</div>
+                {% endif %}
+
+                <div style="margin-top: 2.5rem; display: flex; gap: 1rem;">
+                    <form action="/book/{{ book.id }}/delete" method="POST" style="margin: 0;">
+                        <button type="submit" class="btn btn-danger">Delete Book</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-
 </body>
 
 </html>
