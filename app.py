@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
 from data_models import db, Author, Book
@@ -56,8 +56,29 @@ def home():
         books = query.join(Author).order_by(Author.name).all()
     else:
         books = query.order_by(Book.title).all()
+
+    success_message = request.args.get('success_message')
         
-    return render_template('home.html', books=books, sort_by=sort_by, search_query=search_query)
+    return render_template('home.html', books=books, sort_by=sort_by, search_query=search_query, success_message=success_message)
+
+@app.route('/book/<int:book_id>/delete', methods=['POST'])
+def delete_book(book_id):
+    book = Book.query.get_or_404(book_id)
+    author_id = book.author_id
+    title = book.title
+    
+    db.session.delete(book)
+    db.session.commit()
+
+    # Check if author has any other books left
+    other_books_count = Book.query.filter_by(author_id=author_id).count()
+    if other_books_count == 0:
+        author = Author.query.get(author_id)
+        if author:
+            db.session.delete(author)
+            db.session.commit()
+
+    return redirect(url_for('home', success_message=f'Deleted book "{title}" successfully!'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
