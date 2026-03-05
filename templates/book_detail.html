@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ book.title }} Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+
+    <p><a href="/">&larr; Back to Library</a></p>
+
+    <h1>{{ book.title }}</h1>
+
+    <div style="display: flex; gap: 20px; align-items: flex-start; margin-top: 20px;">
+        {% if book.isbn %}
+        <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-L.jpg" alt="Cover of {{ book.title }}"
+            style="max-height: 400px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        {% endif %}
+
+        <div>
+            <h2>Author: <a href="/author/{{ book.author.id }}">{{ book.author.name if book.author else 'Unknown' }}</a>
+            </h2>
+            <p><strong>ISBN:</strong> {{ book.isbn or 'N/A' }}</p>
+            <p><strong>Publication Year:</strong> {{ book.publication_year or 'N/A' }}</p>
+        </div>
+    </div>
+
+</body>
+
+</html>

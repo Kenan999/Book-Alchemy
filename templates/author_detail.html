@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ author.name }} Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+
+    <p><a href="/">&larr; Back to Library</a></p>
+
+    <h1>{{ author.name }}</h1>
+    <p><strong>Birth Date:</strong> {{ author.birth_date or 'Unknown' }}</p>
+    <p><strong>Date of Death:</strong> {{ author.date_of_death or 'N/A' }}</p>
+
+    <h2 style="margin-top: 40px;">Books by {{ author.name }}</h2>
+
+    {% if author.books %}
+    <ul>
+        {% for book in author.books %}
+        <li><a href="/book/{{ book.id }}">{{ book.title }}</a> ({{ book.publication_year }})</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No books currently in the library for this author.</p>
+    {% endif %}
+
+</body>
+
+</html>

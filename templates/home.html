@@ -49,13 +49,24 @@
       <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg" alt="Cover of {{ book.title }}"
         style="max-height: 250px; width: auto;">
       {% endif %}
-      <h3 style="margin: 10px 0 5px 0;">{{ book.title }}</h3>
-      <p style="margin: 0 0 10px 0; color: #555;">by {{ book.author.name if book.author else 'Unknown' }}</p>
+      <h3 style="margin: 10px 0 5px 0;"><a href="/book/{{ book.id }}" style="text-decoration: none; color: #333;">{{
+          book.title }}</a></h3>
+      <p style="margin: 0 0 10px 0; color: #555;">by <a href="/author/{{ book.author.id }}"
+          style="text-decoration: none; color: #0066cc;">{{ book.author.name if book.author else 'Unknown' }}</a></p>
 
-      <form action="/book/{{ book.id }}/delete" method="POST" style="margin: 0;">
-        <input type="submit" value="Delete Book"
-          style="background-color: #ff4d4d; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">
-      </form>
+      <div style="display: flex; justify-content: space-around; gap: 5px;">
+        <form action="/book/{{ book.id }}/delete" method="POST" style="margin: 0;">
+          <input type="submit" value="Delete Book"
+            style="background-color: #ff4d4d; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; font-size: 0.85em;">
+        </form>
+
+        {% if book.author %}
+        <form action="/author/{{ book.author.id }}/delete" method="POST" style="margin: 0;">
+          <input type="submit" value="Delete Author"
+            style="background-color: #c0392b; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; font-size: 0.85em;">
+        </form>
+        {% endif %}
+      </div>
     </div>
     {% else %}
     <p>No books in the library yet. <a href="/add_book">Add one!</a></p>

@@ -61,6 +61,16 @@ def home():
         
     return render_template('home.html', books=books, sort_by=sort_by, search_query=search_query, success_message=success_message)
 
+@app.route('/book/<int:book_id>')
+def book_detail(book_id):
+    book = Book.query.get_or_404(book_id)
+    return render_template('book_detail.html', book=book)
+
+@app.route('/author/<int:author_id>')
+def author_detail(author_id):
+    author = Author.query.get_or_404(author_id)
+    return render_template('author_detail.html', author=author)
+
 @app.route('/book/<int:book_id>/delete', methods=['POST'])
 def delete_book(book_id):
     book = Book.query.get_or_404(book_id)
@@ -79,6 +89,16 @@ def delete_book(book_id):
             db.session.commit()
 
     return redirect(url_for('home', success_message=f'Deleted book "{title}" successfully!'))
+
+@app.route('/author/<int:author_id>/delete', methods=['POST'])
+def delete_author(author_id):
+    author = Author.query.get_or_404(author_id)
+    name = author.name
+    
+    db.session.delete(author)
+    db.session.commit()
+
+    return redirect(url_for('home', success_message=f'Deleted author "{name}" and all their associated books successfully!'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
