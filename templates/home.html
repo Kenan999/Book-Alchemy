@@ -53,6 +53,9 @@
           book.title }}</a></h3>
       <p style="margin: 0 0 10px 0; color: #555;">by <a href="/author/{{ book.author.id }}"
           style="text-decoration: none; color: #0066cc;">{{ book.author.name if book.author else 'Unknown' }}</a></p>
+      {% if book.rating %}
+      <p style="margin: 0 0 10px 0; font-weight: bold; color: #f39c12;">&#9733; {{ book.rating }}/10</p>
+      {% endif %}
 
       <div style="display: flex; justify-content: space-around; gap: 5px;">
         <form action="/book/{{ book.id }}/delete" method="POST" style="margin: 0;">

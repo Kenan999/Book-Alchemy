@@ -32,10 +32,12 @@ def add_book():
         title = request.form.get('title')
         isbn = request.form.get('isbn')
         publication_year = request.form.get('publication_year')
+        rating = request.form.get('rating')
         author_id = request.form.get('author_id')
         
         if author_id:
-            new_book = Book(title=title, isbn=isbn, publication_year=publication_year, author_id=int(author_id))
+            rating_val = int(rating) if rating else None
+            new_book = Book(title=title, isbn=isbn, publication_year=publication_year, rating=rating_val, author_id=int(author_id))
             db.session.add(new_book)
             db.session.commit()
             message = "Book successfully added!"

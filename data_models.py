@@ -19,6 +19,7 @@ class Book(db.Model):
     isbn = db.Column(db.String(50))
     title = db.Column(db.String(200), nullable=False)
     publication_year = db.Column(db.Integer)
+    rating = db.Column(db.Integer)
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
     
     author = db.relationship('Author', backref=db.backref('books', lazy=True, cascade='all, delete-orphan'))

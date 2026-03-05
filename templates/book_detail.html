@@ -24,6 +24,10 @@
             </h2>
             <p><strong>ISBN:</strong> {{ book.isbn or 'N/A' }}</p>
             <p><strong>Publication Year:</strong> {{ book.publication_year or 'N/A' }}</p>
+            {% if book.rating %}
+            <p><strong>Rating:</strong> <span style="color: #f39c12; font-weight: bold;">&#9733; {{ book.rating
+                    }}/10</span></p>
+            {% endif %}
         </div>
     </div>
 
