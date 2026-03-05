@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Add Author</title>
   </head>
   <body>
+  <h1>Add a New Author</h1>
+  <p><a href="/">Back to Home</a></p>
+  {% if message %}
+    <p style="color: green; font-weight: bold;">{{ message }}</p>
+  {% endif %}
 
   <form action="/add_author" method="POST">
   <label for="name">Author Name:</label> 

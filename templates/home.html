@@ -1,16 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  </head>
-  <body>
 
+<head>
+  <meta charset="UTF-8">
+  <title>My Library</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+
+<body>
+  <h1>My Library</h1>
+
+  <p>
+    <a href="/add_author">Add New Author</a> |
+    <a href="/add_book">Add New Book</a>
+  </p>
+
+  <form action="/" method="GET" style="margin-bottom: 20px;">
+    <label for="sort_by">Sort by:</label>
+    <select name="sort_by" id="sort_by" onchange="this.form.submit()">
+      <option value="title" {% if sort_by=='title' %}selected{% endif %}>Title</option>
+      <option value="author" {% if sort_by=='author' %}selected{% endif %}>Author</option>
+    </select>
+  </form>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 20px;">
     {% for book in books %}
-    <div> <h3>{{ book.title }}</h3>
+    <div style="border: 1px solid #ccc; border-radius: 8px; padding: 10px; width: 220px; text-align: center;">
+      {% if book.isbn %}
+      <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg" alt="Cover of {{ book.title }}"
+        style="max-height: 250px; width: auto;">
+      {% endif %}
+      <h3 style="margin: 10px 0 5px 0;">{{ book.title }}</h3>
+      <p style="margin: 0; color: #555;">by {{ book.author.name if book.author else 'Unknown' }}</p>
     </div>
+    {% else %}
+    <p>No books in the library yet. <a href="/add_book">Add one!</a></p>
     {% endfor %}
+  </div>
 
-  </body>
+</body>
+
 </html>
