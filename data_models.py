@@ -25,14 +25,18 @@ class Book(db.Model):
     title = db.Column(db.String(200), nullable=False)
     publication_year = db.Column(db.Integer)
     rating = db.Column(db.Integer)
-    author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
+    author_id = db.Column(
+        db.Integer, db.ForeignKey('author.id'), nullable=False
+    )
 
     author = db.relationship(
-        'Author', backref=db.backref('books', lazy=True, cascade='all, delete-orphan')
+        'Author',
+        backref=db.backref('books', lazy=True, cascade='all, delete-orphan')
     )
 
     def __repr__(self):
         return f'<Book {self.title}>'
 
     def __str__(self):
-        return f"'{self.title}' by {self.author.name if self.author else 'Unknown'}"
+        author_name = self.author.name if self.author else 'Unknown'
+        return f"'{self.title}' by {author_name}"

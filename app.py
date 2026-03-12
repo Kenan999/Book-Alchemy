@@ -6,9 +6,12 @@ from data_models import db, Author, Book
 app = Flask(__name__)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(basedir, 'data/library.sqlite')}"
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"sqlite:///{os.path.join(basedir, 'data/library.sqlite')}"
+)
 
 db.init_app(app)
+
 
 @app.route('/add_author', methods=['GET', 'POST'])
 def add_author():
@@ -19,11 +22,16 @@ def add_author():
         birthdate = request.form.get('birthdate')
         date_of_death = request.form.get('date_of_death')
 
-        new_author = Author(name=name, birth_date=birthdate, date_of_death=date_of_death)
+        new_author = Author(
+            name=name,
+            birth_date=birthdate,
+            date_of_death=date_of_death
+        )
         db.session.add(new_author)
         db.session.commit()
         message = "Author successfully added!"
     return render_template('add_author.html', message=message)
+
 
 @app.route('/add_book', methods=['GET', 'POST'])
 def add_book():
@@ -39,12 +47,18 @@ def add_book():
 
         if author_id:
             rating_val = int(rating) if rating else None
-            new_book = Book(title=title, isbn=isbn, publication_year=publication_year,
-                            rating=rating_val, author_id=int(author_id))
+            new_book = Book(
+                title=title,
+                isbn=isbn,
+                publication_year=publication_year,
+                rating=rating_val,
+                author_id=int(author_id)
+            )
             db.session.add(new_book)
             db.session.commit()
             message = "Book successfully added!"
     return render_template('add_book.html', authors=authors, message=message)
+
 
 @app.route('/')
 def home():
@@ -65,8 +79,14 @@ def home():
 
     success_message = request.args.get('success_message')
 
-    return render_template('home.html', books=books, sort_by=sort_by,
-                           search_query=search_query, success_message=success_message)
+    return render_template(
+        'home.html',
+        books=books,
+        sort_by=sort_by,
+        search_query=search_query,
+        success_message=success_message
+    )
+
 
 @app.route('/book/<int:book_id>')
 def book_detail(book_id):
@@ -74,15 +94,19 @@ def book_detail(book_id):
     book = Book.query.get_or_404(book_id)
     return render_template('book_detail.html', book=book)
 
-@app.route('/author/<int:author_id>')
+
+@app.route(
+    '/author/<int:author_id>'
+)
 def author_detail(author_id):
     """Route to display detail page for a specific Author."""
     author = Author.query.get_or_404(author_id)
     return render_template('author_detail.html', author=author)
 
+
 @app.route('/book/<int:book_id>/delete', methods=['POST'])
 def delete_book(book_id):
-    """Route to delete a book and its author if it is the author's last book."""
+    """Route to delete a book and its author if it's the author's last book."""
     book = Book.query.get_or_404(book_id)
     author_id = book.author_id
     title = book.title
@@ -98,7 +122,11 @@ def delete_book(book_id):
             db.session.delete(author)
             db.session.commit()
 
-    return redirect(url_for('home', success_message=f'Deleted book "{title}" successfully!'))
+    success_msg = (
+        f'Deleted book "{title}" successfully!'
+    )
+    return redirect(url_for('home', success_message=success_msg))
+
 
 @app.route('/author/<int:author_id>/delete', methods=['POST'])
 def delete_author(author_id):
@@ -109,8 +137,14 @@ def delete_author(author_id):
     db.session.delete(author)
     db.session.commit()
 
-    success_msg = f'Deleted author "{name}" and all their associated books successfully!'
-    return redirect(url_for('home', success_message=success_msg))
+    success_msg = (
+        f'Deleted author "{name}" and all their associated '
+        'books successfully!'
+    )
+    return redirect(
+        url_for('home', success_message=success_msg)
+    )
+
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5002)
