@@ -3,85 +3,143 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Book Alchemy</title>
+  <title>Book Alchemy | Digital Library</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
   <div class="container">
-    <header class="header">
-      <h1><a href="/">📚 Book Alchemy</a></h1>
-      <nav class="nav-links">
-        <a href="/add_author" class="btn btn-outline">Add Author</a>
-        <a href="/add_book" class="btn">Add Book</a>
+    <header class="header glass fade-up" style="animation-delay: 0.1s;">
+      <a href="/" class="logo-link">
+        <span style="font-size: 2rem;">🧪</span>
+        <h1 style="margin: 0; font-family: 'Playfair Display', serif;">Book Alchemy</h1>
+      </a>
+      <nav class="nav-links" style="display: flex; gap: 1rem;">
+        <a href="/add_author" class="btn btn-outline">
+          <i data-lucide="user-plus" style="width: 18px;"></i> Add Author
+        </a>
+        <a href="/add_book" class="btn btn-primary">
+          <i data-lucide="plus-circle" style="width: 18px;"></i> Add Book
+        </a>
       </nav>
     </header>
 
     {% if success_message %}
-    <div class="success-msg">{{ success_message }}</div>
+    <div class="toast">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <i data-lucide="check-circle"></i>
+        {{ success_message }}
+      </div>
+    </div>
     {% endif %}
 
-    <div class="controls-bar">
-      <form action="/" method="GET" class="search-form">
-        <label for="search" style="display: none;">Search Book:</label>
-        <input type="text" id="search" name="search" value="{{ search_query or '' }}" placeholder="Search by title...">
-        <button type="submit" class="btn">Search</button>
+    <div class="controls-bar glass fade-up" style="animation-delay: 0.2s;">
+      <form action="/" method="GET" class="search-form" style="display: flex; gap: 1rem; flex-grow: 1;">
+        <div class="search-group">
+          <i data-lucide="search" style="margin-left: 1rem; color: var(--text-muted); width: 20px;"></i>
+          <input type="text" id="search" name="search" class="search-input" value="{{ search_query or '' }}"
+            placeholder="Search ancient titles...">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
         {% if search_query %}
-        <a href="/" style="margin-left: 0.5rem; font-size: 0.9rem;">Clear</a>
+        <a href="/" class="btn btn-outline" title="Clear Search">
+          <i data-lucide="x"></i>
+        </a>
         {% endif %}
       </form>
 
       <form action="/" method="GET" class="sort-form">
         <input type="hidden" name="search" value="{{ search_query or '' }}">
-        <label for="sort_by">Sort by:</label>
-        <select name="sort_by" id="sort_by" onchange="this.form.submit()">
-          <option value="title" {% if sort_by=='title' %}selected{% endif %}>Title</option>
-          <option value="author" {% if sort_by=='author' %}selected{% endif %}>Author</option>
-        </select>
+        <div class="sort-group">
+          <label for="sort_by" style="color: var(--text-muted); font-weight: 500;">Sort By</label>
+          <select name="sort_by" id="sort_by" class="select-premium" onchange="this.form.submit()">
+            <option value="title" {% if sort_by=='title' %}selected{% endif %}>Title</option>
+            <option value="author" {% if sort_by=='author' %}selected{% endif %}>Author</option>
+          </select>
+        </div>
       </form>
     </div>
 
     <div class="book-grid">
       {% for book in books %}
-      <div class="book-card">
-        {% if book.isbn %}
-        <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg" alt="Cover of {{ book.title }}"
-          class="book-cover">
-        {% else %}
-        <div class="book-cover"
-          style="display: flex; align-items: center; justify-content: center; background-color:#e5e7eb; color: #9ca3af;">
-          No Cover</div>
-        {% endif %}
-
-        <div class="book-info">
-          <h3 class="book-title"><a href="/book/{{ book.id }}">{{ book.title }}</a></h3>
-          <div class="book-author">by <a href="/author/{{ book.author.id }}">{{ book.author.name if book.author else
-              'Unknown' }}</a></div>
-
-          {% if book.rating %}
-          <div class="book-rating">&#9733; {{ book.rating }}/10</div>
-          {% endif %}
-
-          <div class="book-actions">
-            <form action="/book/{{ book.id }}/delete" method="POST">
-              <button type="submit" class="btn btn-danger">Delete Book</button>
-            </form>
-            {% if book.author %}
-            <form action="/author/{{ book.author.id }}/delete" method="POST">
-              <button type="submit" class="btn btn-danger">Delete Author</button>
-            </form>
+      <div class="book-card fade-up" style="animation-delay: {{ 0.1 * loop.index if loop.index < 10 else 1 }}s;">
+        <div class="book-card-inner glass">
+          <div class="image-container">
+            {% if book.rating %}
+            <div class="rating-badge">
+              <i data-lucide="star" style="width: 14px; fill: var(--accent);"></i>
+              {{ book.rating }}
+            </div>
             {% endif %}
+
+            {% if book.isbn %}
+            <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-L.jpg" alt="Cover of {{ book.title }}"
+              class="book-cover">
+            {% else %}
+            <div class="book-cover"
+              style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); color: var(--text-muted);">
+              <i data-lucide="book" style="width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.3;"></i>
+              <span>Digital Archive</span>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="book-details">
+            <a href="/book/{{ book.id }}" class="book-title"
+              style="font-family: 'Playfair Display', serif; font-weight: 700;">{{ book.title }}</a>
+            <a href="/author/{{ book.author.id }}" class="author-link">
+              <i data-lucide="pen-tool"
+                style="width: 14px; display: inline; vertical-align: middle; margin-right: 4px;"></i>
+              {{ book.author.name if book.author else 'Unknown Author' }}
+            </a>
+
+            <div class="actions-overlay">
+              <form action="/book/{{ book.id }}/delete" method="POST" style="flex: 1;">
+                <button type="submit" class="btn btn-danger" style="width: 100%;"
+                  onclick="return confirm('Vanish this volume?')">
+                  <i data-lucide="trash-2" style="width: 16px;"></i>
+                </button>
+              </form>
+              {% if book.author %}
+              <form action="/author/{{ book.author.id }}/delete" method="POST" style="flex: 1;">
+                <button type="submit" class="btn btn-danger" style="width: 100%; border-color: rgba(239, 68, 68, 0.4);"
+                  title="Exile Author" onclick="return confirm('Exile author and all their works?')">
+                  <i data-lucide="user-minus" style="width: 16px;"></i>
+                </button>
+              </form>
+              {% endif %}
+            </div>
           </div>
         </div>
       </div>
       {% else %}
-      <p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 3rem;">
-        No books found in the library. <a href="/add_book" style="font-weight: 600;">Add one!</a>
-      </p>
+      <div style="grid-column: 1 / -1; text-align: center; padding: 5rem;" class="glass fade-up">
+        <i data-lucide="library"
+          style="width: 64px; height: 64px; color: var(--text-muted); margin-bottom: 1.5rem; opacity: 0.2;"></i>
+        <h2 style="color: var(--text-muted); margin-bottom: 1rem;">The shelves are empty...</h2>
+        <a href="/add_book" class="btn btn-primary">Transmute First Book</a>
+      </div>
       {% endfor %}
     </div>
   </div>
+
+  <script>
+    lucide.createIcons();
+
+    // Auto-hide toast
+    const toast = document.querySelector('.toast');
+    if (toast) {
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-20px)';
+        toast.style.transition = 'all 0.5s ease';
+        setTimeout(() => toast.remove(), 500);
+      }, 4000);
+    }
+  </script>
 </body>
 
 </html>

@@ -2,53 +2,89 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>{{ book.title }} - Book Alchemy</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <title>{{ book.title }} | Book Alchemy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
-    <div class="container">
-        <header class="header">
-            <h1><a href="/">📚 Book Alchemy</a></h1>
-            <nav class="nav-links">
-                <a href="/" class="btn btn-outline">&larr; Back to Library</a>
-            </nav>
-        </header>
+  <div class="container">
+    <header class="header glass fade-up">
+      <a href="/" class="logo-link">
+        <span style="font-size: 2rem;">🧪</span>
+        <h1 style="margin: 0;">Book Alchemy</h1>
+      </a>
+      <nav>
+        <a href="/" class="btn btn-outline">
+          <i data-lucide="arrow-left" style="width: 18px;"></i> Back to Library
+        </a>
+      </nav>
+    </header>
 
-        <div class="detail-card">
-            <div style="flex-shrink: 0;">
-                {% if book.isbn %}
-                <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-L.jpg" alt="Cover of {{ book.title }}"
-                    class="detail-cover">
-                {% else %}
-                <div class="detail-cover"
-                    style="height: 380px; width: 250px; display: flex; align-items: center; justify-content: center; background-color: #e5e7eb; color: #9ca3af; font-weight: 600;">
-                    No Cover Available</div>
-                {% endif %}
-            </div>
-
-            <div class="detail-info">
-                <h1>{{ book.title }}</h1>
-                <div class="meta">by <a href="/author/{{ book.author.id }}">{{ book.author.name if book.author else
-                        'Unknown' }}</a></div>
-
-                <p><strong>ISBN:</strong> {{ book.isbn or 'N/A' }}</p>
-                <p><strong>Publication Year:</strong> {{ book.publication_year or 'N/A' }}</p>
-
-                {% if book.rating %}
-                <div class="detail-rating">&#9733; {{ book.rating }} / 10</div>
-                {% endif %}
-
-                <div style="margin-top: 2.5rem; display: flex; gap: 1rem;">
-                    <form action="/book/{{ book.id }}/delete" method="POST" style="margin: 0;">
-                        <button type="submit" class="btn btn-danger">Delete Book</button>
-                    </form>
-                </div>
-            </div>
+    <main class="glass fade-up" style="animation-delay: 0.2s; overflow: hidden;">
+      <div class="detail-layout">
+        <div style="position: relative;">
+          {% if book.isbn %}
+          <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-L.jpg" alt="Cover of {{ book.title }}"
+            class="detail-img">
+          {% else %}
+          <div class="detail-img" style="height: 500px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); color: var(--text-muted);">
+             <i data-lucide="book-open" style="width: 80px; height: 80px; opacity: 0.2; margin-bottom: 2rem;"></i>
+             <p>Visual Soul Not Found</p>
+          </div>
+          {% endif %}
         </div>
-    </div>
+
+        <div class="detail-content">
+          <h1 style="font-family: 'Playfair Display', serif;">{{ book.title }}</h1>
+          <div class="detail-meta">
+            <span>By</span> 
+            <a href="/author/{{ book.author.id }}" class="btn btn-outline" style="margin-left: 0.5rem; padding: 0.4rem 1rem;">
+                <i data-lucide="pen-tool" style="width: 16px;"></i>
+                {{ book.author.name if book.author else 'Unknown Alchemist' }}
+            </a>
+          </div>
+
+          <div style="margin: 3rem 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+            <div class="glass" style="padding: 1.5rem; text-align: center;">
+                <div style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.5rem;">The Arcane Key (ISBN)</div>
+                <div style="font-size: 1.25rem; font-weight: 600;">{{ book.isbn or 'None Recorded' }}</div>
+            </div>
+            <div class="glass" style="padding: 1.5rem; text-align: center;">
+                <div style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.5rem;">Manifestation Year</div>
+                <div style="font-size: 1.25rem; font-weight: 600;">{{ book.publication_year or 'Unknown Era' }}</div>
+            </div>
+          </div>
+
+          {% if book.rating %}
+          <div style="margin-bottom: 3rem;">
+              <div style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 1rem;">Alchemy Rating</div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                {% for i in range(10) %}
+                <i data-lucide="star" style="width: 24px; height: 24px; {{ 'fill: var(--accent); color: var(--accent);' if i < book.rating else 'color: var(--glass-border);' }}"></i>
+                {% endfor %}
+                <span style="font-size: 1.5rem; font-weight: 700; margin-left: 1rem; color: var(--accent);">{{ book.rating }}/10</span>
+              </div>
+          </div>
+          {% endif %}
+
+          <div style="margin-top: 5rem; padding-top: 2rem; border-top: 1px solid var(--glass-border);">
+            <form action="/book/{{ book.id }}/delete" method="POST" onsubmit="return confirm('Vanish this work forever?')">
+              <button type="submit" class="btn btn-danger" style="padding: 1rem 2rem;">
+                <i data-lucide="trash-2" style="width: 20px;"></i> Burn Volume
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 
 </html>

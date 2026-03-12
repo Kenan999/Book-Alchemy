@@ -3,47 +3,74 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Add Author - Book Alchemy</title>
+  <title>Add Author | Book Alchemy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
   <div class="container">
-    <header class="header">
-      <h1><a href="/">📚 Book Alchemy</a></h1>
-      <nav class="nav-links">
-        <a href="/" class="btn btn-outline">&larr; Back to Library</a>
+    <header class="header glass fade-up">
+      <a href="/" class="logo-link">
+        <span style="font-size: 2rem;">🧪</span>
+        <h1 style="margin: 0;">Book Alchemy</h1>
+      </a>
+      <nav>
+        <a href="/" class="btn btn-outline">
+          <i data-lucide="arrow-left" style="width: 18px;"></i> Library
+        </a>
       </nav>
     </header>
 
     {% if message %}
-    <div class="success-msg">{{ message }}</div>
+    <div class="toast">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <i data-lucide="info"></i>
+        {{ message }}
+      </div>
+    </div>
     {% endif %}
 
-    <div class="form-card">
-      <h2 style="margin-bottom: 1.5rem;">Add a New Author</h2>
-
+    <main class="form-wrapper glass fade-up" style="animation-delay: 0.2s;">
+      <h2 class="form-title">Summon New Author</h2>
       <form action="/add_author" method="POST">
-        <div class="form-group">
-          <label for="name">Author Name:</label>
-          <input type="text" id="name" name="name" required placeholder="e.g. George Orwell">
+        <div class="form-control">
+          <label class="form-label" for="name">Full Name</label>
+          <input type="text" id="name" name="name" class="form-input" placeholder="e.g. H.P. Lovecraft" required>
         </div>
 
-        <div class="form-group">
-          <label for="birthdate">Birthdate:</label>
-          <input type="date" id="birthdate" name="birthdate" required>
+        <div class="form-control">
+          <label class="form-label" for="birthdate">Arrival Date (Birth)</label>
+          <input type="date" id="birthdate" name="birthdate" class="form-input">
         </div>
 
-        <div class="form-group">
-          <label for="date_of_death">Date of Death (Optional):</label>
-          <input type="date" id="date_of_death" name="date_of_death">
+        <div class="form-control">
+          <label class="form-label" for="date_of_death">Departure Date (Death)</label>
+          <input type="date" id="date_of_death" name="date_of_death" class="form-input">
         </div>
 
-        <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Add Author</button>
+        <div style="margin-top: 2.5rem;">
+          <button type="submit" class="btn btn-primary" style="width: 100%; height: 3.5rem; font-size: 1.1rem;">
+            Complete Ritual
+          </button>
+        </div>
       </form>
-    </div>
+    </main>
   </div>
+
+  <script>
+    lucide.createIcons();
+    // Auto-hide toast
+    const toast = document.querySelector('.toast');
+    if (toast) {
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'all 0.5s ease';
+        setTimeout(() => toast.remove(), 500);
+      }, 4000);
+    }
+  </script>
 </body>
 
 </html>

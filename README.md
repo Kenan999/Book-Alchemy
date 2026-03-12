@@ -26,7 +26,16 @@ Follow these instructions to get a local copy of Book Alchemy up and running on 
 
 Ensure you have Python 3.8+ installed on your system. 
 
-### Step-by-Step Guide
+### Quick Start
+
+Run the following command to automatically set up and launch the application:
+```bash
+chmod +x run.sh
+./run.sh
+```
+Everything will be configured under [**http://127.0.0.1:5002**](http://127.0.0.1:5002). If the script is not working for any reason, please follow the manual steps below.
+
+### Manual Step-by-Step Guide
 
 1. **Clone the Repository**
    ```bash
@@ -58,7 +67,7 @@ Ensure you have Python 3.8+ installed on your system.
    ```bash
    python3 app.py
    ```
-   The application will be accessible at: `http://127.0.0.1:5000/`
+   The application will be accessible at: `http://127.0.0.1:5002/`
 
 ## 📖 Usage Highlights
 
